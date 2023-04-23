@@ -1,0 +1,22 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    ports:
+      - '27017'
+  app-test:
+    build:
+      context: .
+      dockerfile: Dockerfile-Test
+    depends_on:
+      - mongo
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./src:/app/src
+    environment:
+      PORT: 3000
+      DB_URL: mongodb://mongo:27017/test
+      TRANSACTION_GATEWAY_BASE_URL: http://host.docker.internal:4001
+      STORE_TRANSACTION_GATEWAY_BASE_URL: http://host.docker.internal:4002
+    entrypoint: npm run test
